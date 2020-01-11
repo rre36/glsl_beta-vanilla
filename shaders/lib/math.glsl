@@ -10,6 +10,8 @@ const float pi = 3.14159265358979323846;
 #define finv(x) (1.0-x)
 #define ircp(x) (1.0 / x)
 
+#define landMask(x) (x < 1.0)
+
 float rcp(float x) {
     return ircp(x);
 }
@@ -40,6 +42,10 @@ float pow8(float x) {
 }
 float pow10(float x) {
     return pow5(x)*pow5(x);
+}
+
+vec2 pow2(vec2 x) {
+    return x*x;
 }
 
 float vec3avg(vec3 x) {

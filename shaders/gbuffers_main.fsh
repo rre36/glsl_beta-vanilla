@@ -16,8 +16,17 @@ varying vec4 glcolor;
 
 #include "/lib/fog.glsl"
 
+#ifdef g_entity
+uniform vec4 entityColor;
+#endif
+
 void main() {
 	vec4 color = texture2D(texture, texcoord, -1) * glcolor;
+
+    #ifdef g_entity
+    color.rgb   = mix(color.rgb, entityColor.rgb, entityColor.a);
+    #endif
+
 		color.rgb *= ao * sqrt(ao);
 
 	vec2 lmc 	= vec2(lmcoord.x, 0.0);

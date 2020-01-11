@@ -1,3 +1,5 @@
+#define temporal_aa
+
 varying float ao;
 
 varying vec2 lmcoord;
@@ -8,6 +10,8 @@ varying vec3 scenePosition;
 varying vec4 glcolor;
 
 attribute vec3 mc_Entity;
+
+uniform vec2 taaOffset;
 
 uniform vec3 cameraPosition;
 
@@ -72,5 +76,10 @@ void main() {
     skylight_color  = mix(skylight_basecol, skylight_night, skylight_fade);
 
     pos     = pos.xyzz * diag4(gl_ProjectionMatrix) + vec4(0.0, 0.0, gl_ProjectionMatrix[3].z, 0.0);
+
+    #ifdef temporal_aa
+    pos.xy += taaOffset*pos.w;
+    #endif
+    
     gl_Position = pos;
 }
