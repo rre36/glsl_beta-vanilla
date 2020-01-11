@@ -1,6 +1,7 @@
 #version 120
 
 #include "/lib/math.glsl"
+#extension GL_ARB_shader_texture_lod : enable
 
 /*
 const bool colortex1Clear   = false;
@@ -69,17 +70,17 @@ vec3 screenpos3x3(sampler2D depth) {
     vec2 dx     = vec2(pixelSize.x, 0.0);
     vec2 dy     = vec2(0.0, pixelSize.y);
 
-    vec3 dtl    = vec3(texcoord, 0.0)  + vec3(-pixelSize, texture2D(depth, texcoord - dx - dy).x);
-    vec3 dtc    = vec3(texcoord, 0.0)  + vec3(0.0, -pixelSize.y, texture2D(depth, texcoord - dy).x);
-    vec3 dtr    = vec3(texcoord, 0.0)  + vec3(pixelSize.x, -pixelSize.y, texture2D(depth, texcoord - dy + dx).x);
+    vec3 dtl    = vec3(texcoord, 0.0)  + vec3(-pixelSize, texture2DLod(depth, texcoord - dx - dy, 0).x);
+    vec3 dtc    = vec3(texcoord, 0.0)  + vec3(0.0, -pixelSize.y, texture2DLod(depth, texcoord - dy, 0).x);
+    vec3 dtr    = vec3(texcoord, 0.0)  + vec3(pixelSize.x, -pixelSize.y, texture2DLod(depth, texcoord - dy + dx, 0).x);
 
-    vec3 dml    = vec3(texcoord, 0.0)  + vec3(-pixelSize.x, 0.0, texture2D(depth, texcoord - dx).x);
-    vec3 dmc    = vec3(texcoord, 0.0)  + vec3(0.0, 0.0, texture2D(depth, texcoord).x);
-    vec3 dmr    = vec3(texcoord, 0.0)  + vec3(0.0, pixelSize.y,  texture2D(depth, texcoord + dx).x);
+    vec3 dml    = vec3(texcoord, 0.0)  + vec3(-pixelSize.x, 0.0, texture2DLod(depth, texcoord - dx, 0).x);
+    vec3 dmc    = vec3(texcoord, 0.0)  + vec3(0.0, 0.0, texture2DLod(depth, texcoord, 0).x);
+    vec3 dmr    = vec3(texcoord, 0.0)  + vec3(0.0, pixelSize.y,  texture2DLod(depth, texcoord + dx, 0).x);
 
-    vec3 dbl    = vec3(texcoord, 0.0)  + vec3(-pixelSize.x, pixelSize.y, texture2D(depth, texcoord + dy - dx).x);
-    vec3 dbc    = vec3(texcoord, 0.0)  + vec3(0.0, pixelSize.y, texture2D(depth, texcoord + dy).x);
-    vec3 dbr    = vec3(texcoord, 0.0)  + vec3(pixelSize.x, pixelSize.y, texture2D(depth, texcoord + dy + dx).x);
+    vec3 dbl    = vec3(texcoord, 0.0)  + vec3(-pixelSize.x, pixelSize.y, texture2DLod(depth, texcoord + dy - dx, 0).x);
+    vec3 dbc    = vec3(texcoord, 0.0)  + vec3(0.0, pixelSize.y, texture2DLod(depth, texcoord + dy, 0).x);
+    vec3 dbr    = vec3(texcoord, 0.0)  + vec3(pixelSize.x, pixelSize.y, texture2DLod(depth, texcoord + dy + dx, 0).x);
 
     vec3 dmin   = dmc;
 
@@ -122,25 +123,25 @@ vec4 texture_catmullrom(sampler2D tex, vec2 uv) {
         uv12   *= pixelSize;
 
     vec4 col    = vec4(0.0);
-        col    += texture2D(tex, vec2(uv0.x, uv0.y), 0)*w0.x*w0.y;
-        col    += texture2D(tex, vec2(uv12.x, uv0.y), 0)*w12.x*w0.y;
-        col    += texture2D(tex, vec2(uv3.x, uv0.y), 0)*w3.x*w0.y;
+        col    += texture2DLod(tex, vec2(uv0.x, uv0.y), 0)*w0.x*w0.y;
+        col    += texture2DLod(tex, vec2(uv12.x, uv0.y), 0)*w12.x*w0.y;
+        col    += texture2DLod(tex, vec2(uv3.x, uv0.y), 0)*w3.x*w0.y;
 
-        col    += texture2D(tex, vec2(uv0.x, uv12.y), 0)*w0.x*w12.y;
-        col    += texture2D(tex, vec2(uv12.x, uv12.y), 0)*w12.x*w12.y;
-        col    += texture2D(tex, vec2(uv3.x, uv12.y), 0)*w3.x*w12.y;
+        col    += texture2DLod(tex, vec2(uv0.x, uv12.y), 0)*w0.x*w12.y;
+        col    += texture2DLod(tex, vec2(uv12.x, uv12.y), 0)*w12.x*w12.y;
+        col    += texture2DLod(tex, vec2(uv3.x, uv12.y), 0)*w3.x*w12.y;
 
-        col    += texture2D(tex, vec2(uv0.x, uv3.y), 0)*w0.x*w3.y;
-        col    += texture2D(tex, vec2(uv12.x, uv3.y), 0)*w12.x*w3.y;
-        col    += texture2D(tex, vec2(uv3.x, uv3.y), 0)*w3.x*w3.y;
+        col    += texture2DLod(tex, vec2(uv0.x, uv3.y), 0)*w0.x*w3.y;
+        col    += texture2DLod(tex, vec2(uv12.x, uv3.y), 0)*w12.x*w3.y;
+        col    += texture2DLod(tex, vec2(uv3.x, uv3.y), 0)*w3.x*w3.y;
 
     return clamp(col, 0.0, 65535.0);
 }
 
-#define taa_blend 1.3
+#define taa_blend 1.0
 #define taa_mreject 4.0
 #define taa_antighost 4.0
-#define taa_antiflicker 0.4
+#define taa_antiflicker 0.6
 
 const vec3 lumacoeff_rec709 = vec3(0.2125, 0.7154, 0.0721);
 
@@ -161,19 +162,19 @@ vec3 get_taa(vec3 scenecol, float scenedepth) {
 
     if (clamp(rcoord, 0.0, 1.0) != rcoord) return scenecol;
 
-    vec3 coltl   = texture2D(colortex0,texcoord+vec2(-pixelSize.x, -pixelSize.y)).rgb;
-	vec3 coltm   = texture2D(colortex0,texcoord+vec2( 0.0,         -pixelSize.y)).rgb;
-	vec3 coltr   = texture2D(colortex0,texcoord+vec2( pixelSize.x, -pixelSize.y)).rgb;
-	vec3 colml   = texture2D(colortex0,texcoord+vec2(-pixelSize.x, 0.0         )).rgb;
-	vec3 colmr   = texture2D(colortex0,texcoord+vec2( pixelSize.x, 0.0         )).rgb;
-	vec3 colbl   = texture2D(colortex0,texcoord+vec2(-pixelSize.x,  pixelSize.y)).rgb;
-	vec3 colbm   = texture2D(colortex0,texcoord+vec2( 0.0,          pixelSize.x)).rgb;
-	vec3 colbr   = texture2D(colortex0,texcoord+vec2( pixelSize.x,  pixelSize.y)).rgb;
+    vec3 coltl   = texture2DLod(colortex0,texcoord+vec2(-pixelSize.x, -pixelSize.y), 0).rgb;
+	vec3 coltm   = texture2DLod(colortex0,texcoord+vec2( 0.0,         -pixelSize.y), 0).rgb;
+	vec3 coltr   = texture2DLod(colortex0,texcoord+vec2( pixelSize.x, -pixelSize.y), 0).rgb;
+	vec3 colml   = texture2DLod(colortex0,texcoord+vec2(-pixelSize.x, 0.0         ), 0).rgb;
+	vec3 colmr   = texture2DLod(colortex0,texcoord+vec2( pixelSize.x, 0.0         ), 0).rgb;
+	vec3 colbl   = texture2DLod(colortex0,texcoord+vec2(-pixelSize.x,  pixelSize.y), 0).rgb;
+	vec3 colbm   = texture2DLod(colortex0,texcoord+vec2( 0.0,          pixelSize.x), 0).rgb;
+	vec3 colbr   = texture2DLod(colortex0,texcoord+vec2( pixelSize.x,  pixelSize.y), 0).rgb;
 
 	vec3 min_col = min(scenecol,min(min(min(coltl,coltm),min(coltr,colml)),min(min(colmr,colbl),min(colbm,colbr))));
 	vec3 max_col = max(scenecol,max(max(max(coltl,coltm),max(coltr,colml)),max(max(colmr,colbl),max(colbm,colbr))));
 
-    vec3 repcol = texture_catmullrom(colortex1, rcoord).rgb;
+    vec3 repcol = texture_catmullrom(colortex1, rcoord).rgb;     //removed catmull-rom, maybe that makes it blur
 
     vec3 taacol = clamp(repcol, min_col, max_col);
 
@@ -186,13 +187,13 @@ vec3 get_taa(vec3 scenecol, float scenedepth) {
     
     vec2 vel    = (texcoord-rcoord)/pixelSize;
 
-    float taa_weight = saturate(1.0-sqrt(length(vel))/2.0)*0.9;
+    float taa_weight = saturate(1.0-sqrt(length(vel))/2.5)*0.6;
 
     taa_weight     = max(taa_weight, 0.9);
 
     float lb    = taa_blend;
 
-    taa_weight  = mix(taa_weight, 0.8, 1.0-saturate(ldiff*lb + bweight + clamped*taa_antighost));
+    taa_weight  = mix(taa_weight, 0.7, 1.0-saturate(ldiff*lb + bweight + clamped*taa_antighost));
 
     taacol.rgb  = mix(scenecol.rgb, taacol.rgb, taa_weight);
 
@@ -201,7 +202,7 @@ vec3 get_taa(vec3 scenecol, float scenedepth) {
 
 
 void main() {
-    vec4 scenecol   = texture2D(colortex0, texcoord);
+    vec4 scenecol   = texture2DLod(colortex0, texcoord, 0);
     float scenedepth = texture2D(depthtex1, texcoord).x;
 
     #ifdef temporal_aa

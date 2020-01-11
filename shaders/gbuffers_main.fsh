@@ -24,7 +24,7 @@ void main() {
 	vec4 color = texture2D(texture, texcoord, -1) * glcolor;
 
     #ifdef g_entity
-    color.rgb   = mix(color.rgb, entityColor.rgb, entityColor.a);
+    color.rgb   = mix(color.rgb, entityColor.rgb * 0.95, saturate(sqrt(entityColor.a)));
     #endif
 
 		color.rgb *= ao * sqrt(ao);
