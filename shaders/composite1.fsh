@@ -137,10 +137,10 @@ vec4 texture_catmullrom(sampler2D tex, vec2 uv) {
     return clamp(col, 0.0, 65535.0);
 }
 
-#define taa_blend 0.7
-#define taa_mreject 1.0
-#define taa_antighost 1.0
-#define taa_antiflicker 0.3
+#define taa_blend 1.3
+#define taa_mreject 4.0
+#define taa_antighost 4.0
+#define taa_antiflicker 0.4
 
 const vec3 lumacoeff_rec709 = vec3(0.2125, 0.7154, 0.0721);
 
@@ -192,7 +192,7 @@ vec3 get_taa(vec3 scenecol, float scenedepth) {
 
     float lb    = taa_blend;
 
-    taa_weight  = mix(taa_weight, 0.99, 1.0-saturate(ldiff*lb + bweight + clamped*taa_antighost));
+    taa_weight  = mix(taa_weight, 0.8, 1.0-saturate(ldiff*lb + bweight + clamped*taa_antighost));
 
     taacol.rgb  = mix(scenecol.rgb, taacol.rgb, taa_weight);
 
