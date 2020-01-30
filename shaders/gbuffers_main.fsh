@@ -2,7 +2,7 @@
 #include "/lib/math.glsl"
 
 uniform sampler2D lightmap;
-uniform sampler2D texture;
+uniform sampler2D gcolor;
 
 varying float ao;
 
@@ -12,7 +12,7 @@ varying vec2 texcoord;
 varying vec3 scenePosition;
 varying vec3 skylight_color;
 
-varying vec4 glcolor;
+varying vec4 tint;
 
 #include "/lib/fog.glsl"
 
@@ -21,7 +21,7 @@ uniform vec4 entityColor;
 #endif
 
 void main() {
-	vec4 color = texture2D(texture, texcoord, -1) * glcolor;
+	vec4 color = texture2D(gcolor, texcoord, -1) * tint;
 
     #ifdef g_entity
     color.rgb   = mix(color.rgb, entityColor.rgb * 0.95, saturate(sqrt(entityColor.a)));

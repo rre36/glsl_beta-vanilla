@@ -8,7 +8,7 @@ varying vec2 texcoord;
 
 varying vec3 scenePosition;
 
-varying vec4 glcolor;
+varying vec4 tint;
 
 attribute vec3 mc_Entity;
 
@@ -38,7 +38,7 @@ float lin_step(float x, float low, float high) {
 void main() {
     texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
     lmcoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
-    glcolor = gl_Color;
+    tint    = gl_Color;
 
     #ifndef g_translucent
         if (!(mc_Entity.x == 18.0 || mc_Entity.x == 161.0)) ao = gl_Color.a;
@@ -47,13 +47,13 @@ void main() {
         #ifdef g_entities
             vec3 normal     = mat3(gbufferModelViewInverse) * normalize(gl_NormalMatrix * gl_Normal);
             float old_ao    = saturate(dot(normal, vec3(0.0, 1.0, 0.0)) * 0.5 + 0.5);
-            glcolor.rgb    *= old_ao * 0.7 + 0.3;
+            tint.rgb    *= old_ao * 0.7 + 0.3;
         #endif
     #else
         ao = 1.0;
     #endif
 
-    glcolor.a = 1.0;
+    tint.a = 1.0;
 
     vec4 pos    = gl_Vertex;
         pos     = viewMAD(gl_ModelViewMatrix, pos.xyz).xyzz;

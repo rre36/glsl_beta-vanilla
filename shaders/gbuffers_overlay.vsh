@@ -1,7 +1,11 @@
 #define temporal_aa
 
 varying vec2 texcoord;
-varying vec4 glcolor;
+varying vec4 tint;
+
+#ifdef g_enchantment
+varying vec2 lmcoord;
+#endif
 
 uniform vec2 taaOffset;
 
@@ -22,5 +26,9 @@ void main() {
     gl_Position = pos;
 
 	texcoord = (gl_TextureMatrix[0] * gl_MultiTexCoord0).xy;
-	glcolor = gl_Color;
+	tint    = gl_Color;
+
+    #ifdef g_enchantment
+        lmcoord  = (gl_TextureMatrix[1] * gl_MultiTexCoord1).xy;
+    #endif
 }
