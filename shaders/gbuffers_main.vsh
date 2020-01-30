@@ -1,4 +1,5 @@
 #define temporal_aa
+//#define old_lighting
 
 varying float ao;
 
@@ -42,6 +43,12 @@ void main() {
     #ifndef g_translucent
         if (!(mc_Entity.x == 18.0 || mc_Entity.x == 161.0)) ao = gl_Color.a;
 	    else ao = 1.0;
+
+        #ifdef g_entities
+            vec3 normal     = mat3(gbufferModelViewInverse) * normalize(gl_NormalMatrix * gl_Normal);
+            float old_ao    = saturate(dot(normal, vec3(0.0, 1.0, 0.0)) * 0.5 + 0.5);
+            glcolor.rgb    *= old_ao * 0.7 + 0.3;
+        #endif
     #else
         ao = 1.0;
     #endif
