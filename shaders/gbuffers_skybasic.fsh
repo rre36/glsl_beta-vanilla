@@ -16,6 +16,8 @@ varying vec4 tint;
 
 #define sstep(x, low, high) smoothstep(low, high, x)
 
+#define beta_18_sunrise
+
 float fogify(float x, float w) {
 	float y = clamp(exp(-x * w) * 1.75 - 0.4, 0.0, 1.0);
 	return pow2(y);
@@ -40,7 +42,10 @@ void main() {
 		vec4 pos = vec4(gl_FragCoord.xy / vec2(viewWidth, viewHeight) * 2.0 - 1.0, 1.0, 1.0);
 		pos = gbufferProjectionInverse * pos;
 		color = calcSkyColor(normalize(pos.xyz), color);
+
+        #ifdef beta_18_sunrise
 		if (tint.a < 0.99 && starData.a < 0.5) color = mix(color, tint.rgb, tint.a);
+        #endif
 	}
 
 
